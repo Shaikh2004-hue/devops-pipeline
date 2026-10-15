@@ -1,0 +1,19 @@
+---
+- name: Configure and deploy DevOps application
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Verify Kubernetes cluster
+      command: kubectl get nodes
+      changed_when: false
+
+    - name: Apply Kubernetes deployment
+      command: kubectl apply -f ../k8s/deployment.yaml
+      register: deployment_result
+      changed_when: "'configured' in deployment_result.stdout or 'created' in deployment_result.stdout"
+
+    - name: Display deployment result
+      debug:
+        var: deployment_result.stdout
